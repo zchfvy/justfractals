@@ -11,14 +11,14 @@ def gen_point(c, iters=50):
         for i in range(iters):
             z = z**2 + c
             if abs(z) > 8.0:
-                return False
-        return True
+                return i/iters
+        return 0
     except OverflowError:
-        return False
+        return i/iters
 
 
-sx = 8000
-sy = 4080
+sx = 10000
+sy = 6000
 dx = 4
 ox = -0.8
 
@@ -31,8 +31,7 @@ for x in tqdm(range(sx)):
 
         res = gen_point(complex(px, py))
 
-        if res:
-            grid[y][x] = 1
+        grid[y][x] = res
 
 ppm.save_img('result.ppm', grid)
 
