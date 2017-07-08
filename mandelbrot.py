@@ -18,8 +18,8 @@ def gen_point(c, iters=50):
         return i/iters
 
 
-sx = 6000
-sy = 3000
+sx = 10000
+sy = 5000
 dx = 4
 ox = -0.8
 

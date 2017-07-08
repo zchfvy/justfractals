@@ -8,15 +8,15 @@ def save_img(name, data_array):
 def _print_img(data_array):
     w = len(data_array[1])
     h = len(data_array)
-    rv = ""
-    rv += "P2\n"
-    rv += str(w) + " " + str(h) + "\n"
-    rv += "255\n"
+
+    rows = []
     for row in tqdm(data_array):
-        for pix in row:
-            rv += str(int(pix*255)) + " "
-        rv += "\n"
+        row_data = [str(int(pix*255)) for pix in row]
+        rows.append(' '.join(row_data))
+    data = '\n'.join(rows)
 
-    return rv
-
-
+    return f"""P2
+    {w} {h}
+    255
+    {data}
+    """
