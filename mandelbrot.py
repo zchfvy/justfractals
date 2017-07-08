@@ -2,6 +2,7 @@ from __future__ import division
 
 import ppm
 import cmath
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from tqdm import tqdm
 
@@ -17,21 +18,50 @@ def gen_point(c, iters=50):
         return i/iters
 
 
-sx = 10000
-sy = 6000
+sx = 6000
+sy = 3000
 dx = 4
 ox = -0.8
 
-grid = [[0 for x in range(sx)] for y in range(sy)]
 
-for x in tqdm(range(sx)):
-    for y in tqdm(range(sy)):
+def process_column(x_coord):
+    col = []
+    x = x_coord
+    for y in range(sy):
         px = (x - sx/2) * (dx/sx) + ox
         py = (y - sy/2) * (dx/sx)
 
         res = gen_point(complex(px, py))
 
-        grid[y][x] = res
+        col.append(res)
 
-ppm.save_img('result.ppm', grid)
+    return col
+
+
+def main():
+    grid = []
+    with ProcessPoolExecutor() as executor:
+        try:
+            futures = [executor.submit(process_column, x) for x in range(sx)]
+
+            # Show the bar, wait for completion
+            progress = tqdm(as_completed(futures),
+                            total=len(futures),
+                            unit='col',
+                            leave=True)
+            for _ in progress:
+                pass
+        except KeyboardInterrupt:
+            for f in futures:
+                f.cancel()
+
+        # Append them to grid, in order
+        for f in futures:
+            grid.append(f.result())
+
+        ppm.save_img('result.ppm', grid)
+
+
+if __name__ == '__main__':
+    main()
 

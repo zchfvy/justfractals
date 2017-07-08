@@ -1,3 +1,4 @@
+from tqdm import tqdm
 
 def save_img(name, data_array):
     data = _print_img(data_array)
@@ -11,7 +12,7 @@ def _print_img(data_array):
     rv += "P2\n"
     rv += str(w) + " " + str(h) + "\n"
     rv += "255\n"
-    for row in data_array:
+    for row in tqdm(data_array):
         for pix in row:
             rv += str(int(pix*255)) + " "
         rv += "\n"
